@@ -67,12 +67,16 @@ jobs:
           echo "Latest tag from upstream: $latest_upstream_tag"
           echo "::set-output name=upstream_tag::$latest_upstream_tag"
       
-      - name: Get latest tag from local repo
+      - name: Clone repository
+        uses: actions/checkout@v2
+      
+      - name: Get latest tag from repository
         id: latest_local_tag
         run: |
-          latest_local_tag=${GITHUB_REF#refs/tags/}
-          echo "Latest tag from local repo: $latest_local_tag"
-          echo "::set-output name=local_tag::$latest_local_tag"
+          git fetch --tags
+          latest_local_tag=$(git describe --tags --abbrev=0)
+          echo "Latest tag from repository: $latest_local_tag"
+          echo "::set-output name=latest_tag::$latest_local_tag"
 
 
 
