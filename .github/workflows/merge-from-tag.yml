@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate branch name
         id: branch_name
-        run: echo "::set-output name=branch::Tag-${{ steps.latest_tag.outputs.tag }}"
+        run: echo "::set-output name=branch::PR-Tag-${{ steps.latest_tag.outputs.tag }}"
 
       - name: Checkout main branch
         run: git checkout main
