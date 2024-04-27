@@ -36,8 +36,6 @@ jobs:
 
       - name: Merge upstream changes
         run: |
-          git remote add upstream https://github.com/run-llama/create-llama.git
-          git fetch upstream --tags
           git rebase upstream/${{ steps.latest_tag.outputs.tag }}
           git checkout HEAD -- README.md LICENSES/
           git add .
