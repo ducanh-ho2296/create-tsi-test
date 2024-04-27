@@ -1,4 +1,4 @@
-name: Merge Upstream Changes
+name: Merge Upstream Tag Changes
 
 on:
   schedule:
