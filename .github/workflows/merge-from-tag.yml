@@ -37,7 +37,7 @@ jobs:
       - name: Merge upstream changes
         run: |
           # Temporarily allowing empty commits in case of no changes
-          git merge --allow-unrelated-histories upstream/${{ steps.latest_tag.outputs.tag }} -X theirs 
+          git merge --allow-unrelated-histories upstream/${{ steps.latest_tag.outputs.tag }} -X theirs --no-commit
           git checkout HEAD -- README.md LICENSES/
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
