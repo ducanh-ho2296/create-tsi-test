@@ -62,11 +62,12 @@ jobs:
 
       - name: Get latest tag from upstream
         id: latest_upstream_tag
-        run: echo "::set-output name=tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
-
+        run: echo "::set-output name=upstream_tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
+      
       - name: Get latest tag from local repo
         id: latest_local_tag
-        run: echo "::set-output name=tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
+        run: echo "::set-output name=local_tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
+
 
       - name: Check if latest tags differ
         id: check_tag_diff
