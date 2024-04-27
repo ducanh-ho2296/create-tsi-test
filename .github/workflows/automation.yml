@@ -37,7 +37,7 @@ jobs:
       - name: Merge upstream changes from latest tag
         run: |
           latest_tag="${{ steps.get_latest_tag.outputs.latest_tag }}"
-          git merge --allow-unrelated-histories "upstream/$latest_tag" -X theirs 
+          git merge --allow-unrelated-histories "upstream/$latest_tag" -X theirs --no-ff
           git checkout HEAD -- README.md LICENSES/
           git commit -m "Merge upstream changes from tag $latest_tag"
 
