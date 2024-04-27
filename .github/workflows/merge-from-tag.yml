@@ -36,13 +36,11 @@ jobs:
 
       - name: Merge upstream changes
         run: |
-          git merge upstream/${{ steps.latest_tag.outputs.tag }} --no-commit  # Merge changes associated with the tag without committing
-          git checkout HEAD -- README.md LICENSES/  # Reset specific files
-          if git diff-index --quiet HEAD --; then
-            echo "No changes to commit"
-          else
-            git commit -m "Merge upstream Tag changes"
-          fi
+          git fetch upstream --tags
+          git rebase upstream/${{ steps.latest_tag.outputs.tag }}
+          git checkout HEAD -- README.md LICENSES/
+          git add .
+          git commit -m "Rebase upstream Tag changes"
 
       - name: Generate random branch name
         id: random_branch
