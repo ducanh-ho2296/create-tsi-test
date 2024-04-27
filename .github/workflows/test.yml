@@ -1,0 +1,15 @@
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  get-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get tag name
+        id: get_tag_name
+        run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
+
+      - name: Use the tag name
+        run: echo "Latest tag from local repo: ${{ steps.get_tag_name.outputs.tag_name }}"
