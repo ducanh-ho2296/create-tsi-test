@@ -3,7 +3,7 @@ name: Auto Release
 on:
   push:
     branches:
-      - main  # Change to your desired branch
+      - demo1  # Change to your desired branch
 
 jobs:
   release:
