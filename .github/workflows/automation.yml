@@ -25,13 +25,13 @@ jobs:
 
       - name: Fetch the upstream repo
         run: |
-          git remote add upstream https://github.com/ducanhho2296/DeepAmenitySegmentation.git
+          git remote add upstream https://github.com/run-llama/create-llama.git
           git fetch upstream
 
       - name: Merge upstream changes
         run: |
           # Temporarily allowing empty commits in case of no changes
-          git merge --allow-unrelated-histories upstream/main -X theirs --no-commit
+          git merge --allow-unrelated-histories upstream/main || true
           git checkout HEAD -- README.md LICENSES/
           git commit -m "Merge upstream changes"
 
