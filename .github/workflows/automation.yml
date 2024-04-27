@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: '0 0 */2 * *'  # Run every 2 days
   workflow_dispatch:  # Allows manual trigger
-  push: 
-    tags:
-      - 'v*.*.*'
 
 jobs:
   merge-upstream:
@@ -40,7 +37,7 @@ jobs:
 
       - name: Merge main branch changes if any
         if: steps.check_main_changes.outputs.main_changed == 'true'
-        run: git merge --allow-unrelated-histories upstream/main -X theirs --no-commit
+        run: git merge --allow-unrelated-histories upstream/main -X theirs 
 
 
       - name: Generate branch name for main branch changes
@@ -77,7 +74,7 @@ jobs:
         id: latest_local_tag
         run: |
           git fetch --tags
-          latest_local_tag=$(git describe --tags --abbrev=0)
+          latest_local_tag=$(git describe --tags --abbrev=0 --always)
           echo "Latest tag from repository: $latest_local_tag"
           echo "::set-output name=latest_tag::$latest_local_tag"
 
