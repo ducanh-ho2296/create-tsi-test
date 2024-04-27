@@ -28,4 +28,4 @@ jobs:
       - name: Run script to add license
         run: python add_license.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
