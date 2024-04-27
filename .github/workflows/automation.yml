@@ -38,7 +38,7 @@ jobs:
         run: echo "::set-output name=branch::PR-upstream-$(date '+%d-%B' | tr '[:upper:]' '[:lower:]')"
 
       - name: Checkout main branch
-        run: git checkout main
+        run: git checkout demo
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
