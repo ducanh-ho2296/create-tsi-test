@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 0 */2 * *'  # Run every 2 days
   workflow_dispatch:  # Allows manual trigger
+  push: 
+    tags:
+      - 'v*.*.*'
 
 jobs:
   merge-upstream:
