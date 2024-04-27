@@ -68,7 +68,7 @@ jobs:
           echo "::set-output name=upstream_tag::$latest_upstream_tag"
       
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Get latest tag from repository
         id: latest_local_tag
