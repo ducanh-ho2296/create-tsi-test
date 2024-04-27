@@ -1,4 +1,4 @@
-name: Merge newes upstreaming Tag 
+name: Merge newest upstreaming Tag 
 
 on:
   schedule:
@@ -36,9 +36,8 @@ jobs:
 
       - name: Merge upstream changes
         run: |
-          # Temporarily allowing empty commits in case of no changes
-          git merge --allow-unrelated-histories upstream/${{ steps.latest_tag.outputs.tag }} -X theirs --no-commit
-          git checkout HEAD -- README.md LICENSES/
+          git merge upstream/${{ steps.latest_tag.outputs.tag }} --no-commit  # Merge changes associated with the tag without committing
+          git checkout HEAD -- README.md LICENSES/  # Reset specific files
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else
