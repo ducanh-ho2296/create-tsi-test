@@ -70,7 +70,8 @@ jobs:
       - name: Get latest tag from local repo
         id: latest_local_tag
         run: |
-          latest_local_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          latest_local_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+
           echo "Latest tag from local repo: $latest_local_tag"
           echo "::set-output name=local_tag::$latest_local_tag"
 
