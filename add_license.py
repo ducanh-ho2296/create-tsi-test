@@ -2,9 +2,9 @@ from github import Github
 import os
 
 # GitHub credentials
-github_username = "your_username"
+github_username = "ducanh-ho2296"
 github_token = "your_token"
-repo_name = "your_repo_name"
+repo_name = "create-tsi-test"
 
 # License header to add
 license_header = """# SPDX-FileCopyrightText: 2024 Deutsche Telekom AG, LlamaIndex, Vercel, Inc.
