@@ -78,12 +78,10 @@ jobs:
           echo "Latest tag from repository: $latest_local_tag"
           echo "::set-output name=latest_local_tag::$latest_local_tag"
 
-
-
       - name: Check if latest tags differ
         id: check_tag_diff
         run: |
-          if [[ "${{ steps.latest_upstream_tag.outputs.tag }}" != "${{ steps.latest_local_tag.outputs.tag }}" ]]; then
+          if [[ "${steps.latest_upstream_tag.outputs.upstream_tag}"!= "${steps.latest_local_tag.outputs.latest_local_tag}" ]]; then
             echo "Tags differ"
             echo "::set-output name=tag_diff::true"
           else
