@@ -31,7 +31,7 @@ jobs:
       - name: Merge upstream changes
         run: |
           # Temporarily allowing empty commits in case of no changes
-          git merge --allow-unrelated-histories upstream/main -X theirs --no-commit
+          git merge --allow-unrelated-histories upstream/main -X theirs 
           git checkout HEAD -- README.md LICENSES/
           git commit -m "Merge upstream changes"
 
