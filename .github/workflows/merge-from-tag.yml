@@ -1,4 +1,4 @@
-name: Merge Upstream Changes
+name: Merge newes upstreaming Tag 
 
 on:
   schedule:
@@ -42,20 +42,20 @@ jobs:
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else
-            git commit -m "Merge upstream changes"
+            git commit -m "Merge upstream Tag changes"
           fi
 
       - name: Generate random branch name
         id: random_branch
-        run: echo "::set-output name=branch::merge-upstream-$(date +%s | sha256sum | base64 | head -c 8 ; echo)"
+        run: echo "::set-output name=branch::merge-TAG-$${{ steps.latest_tag.outputs.tag }}"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PAT }}
-          commit-message: "Merge upstream changes"
+          commit-message: "Merge upstream Tag changes"
           branch: ${{ steps.random_branch.outputs.branch }}
-          title: "Merge Upstream Changes"
+          title: "Merge the lastest Tag of the Upstream"
           body: |
             This pull request merges the latest changes from the upstream repository.
             Please review and merge manually.
