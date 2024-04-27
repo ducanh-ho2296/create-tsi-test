@@ -37,7 +37,8 @@ jobs:
 
       - name: Merge main branch changes if any
         if: steps.check_main_changes.outputs.main_changed == 'true'
-        run: git merge upstream/main --no-commit
+        run: git merge --allow-unrelated-histories upstream/main -X theirs --no-commit
+
 
       - name: Generate branch name for main branch changes
         id: main_branch_name
@@ -80,7 +81,7 @@ jobs:
 
       - name: Merge latest tag from upstream if different
         if: steps.check_tag_diff.outputs.tag_diff == 'true'
-        run: git merge --no-commit --no-ff ${{ steps.latest_upstream_tag.outputs.tag }}
+        run: git merge --allow-unrelated-histories theirs -X --no-commit --no-ff ${{ steps.latest_upstream_tag.outputs.tag }}
 
       - name: Generate branch name for tag changes
         id: tag_branch_name
