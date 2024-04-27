@@ -1,4 +1,4 @@
-name: Merge Upstream Changes
+name: Merge Latest Tag from Upstream
 
 on:
   schedule:
@@ -23,35 +23,30 @@ jobs:
           git add .gitattributes
           git commit -m "Set our merge strategy for specific files."
 
-      - name: Fetch the upstream repo
-        run: |
-          git remote add upstream https://github.com/run-llama/create-llama.git
-          git fetch upstream
+      - name: Fetch the upstream repo with tags
+        run: git fetch --tags https://github.com/run-llama/create-llama.git  # Add the URL of the upstream repo here
 
-      - name: Fetch the latest tag from the upstream repo
-        id: get_latest_tag
-        run: |
-          latest_tag=$(git ls-remote --tags https://github.com/run-llama/create-llama.git | awk '{print $2}' | cut -d '/' -f 3 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
-          echo "::set-output name=latest_tag::$latest_tag"
+      - name: Get the latest tag
+        id: latest_tag
+        run: echo "::set-output name=tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
 
-      - name: Merge upstream changes from latest tag
-        run: |
-          latest_tag="${{ steps.get_latest_tag.outputs.latest_tag }}"
-          git merge --allow-unrelated-histories "upstream/$latest_tag" -X theirs --no-ff
-          git checkout HEAD -- README.md LICENSES/
-          git commit -m "Merge upstream changes from tag $latest_tag"
+      - name: Checkout the latest tag
+        run: git checkout ${{ steps.latest_tag.outputs.tag }}
 
-      - name: Generate random branch name
-        id: random_branch
-        run: echo "::set-output name=branch::merge-upstream-$(date +%s | sha256sum | base64 | head -c 8 ; echo)"
+      - name: Generate branch name
+        id: branch_name
+        run: echo "::set-output name=branch::PR-upstream-$(date '+%d-%B' | tr '[:upper:]' '[:lower:]')"
+
+      - name: Checkout main branch
+        run: git checkout main
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PAT }}
-          commit-message: "Merge upstream changes"
-          branch: ${{ steps.random_branch.outputs.branch }}
-          title: "Merge Upstream Changes"
+          commit-message: "Merge latest tag from upstream"
+          branch: ${{ steps.branch_name.outputs.branch }}
+          title: "Merge Latest Tag from Upstream"
           body: |
-            This pull request merges the latest changes from the upstream repository.
+            This pull request merges the latest tag from the upstream repository.
             Please review and merge manually.
