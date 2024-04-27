@@ -1,4 +1,4 @@
-name: Merge newest upstreaming Tag 
+name: Merge newest upstream Tag 
 
 on:
   schedule:
@@ -36,6 +36,7 @@ jobs:
 
       - name: Merge upstream changes
         run: |
+          git fetch upstream
           git rebase upstream/${{ steps.latest_tag.outputs.tag }}
           git checkout HEAD -- README.md LICENSES/
           git add .
