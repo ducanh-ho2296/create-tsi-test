@@ -36,11 +36,8 @@ jobs:
         id: branch_name
         run: echo "::set-output name=branch::PR-Tag-${{ steps.latest_tag.outputs.tag }}"
 
-      - name: Checkout main branch
-        run: git checkout main
-
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PAT }}
           commit-message: "Merge latest tag from upstream"
@@ -49,3 +46,10 @@ jobs:
           body: |
             This pull request merges the latest tag from the upstream repository.
             Please review and merge manually.
+
+      - name: Merge pull request into main branch
+        uses: repo-sync/pull-request@v6
+        with:
+          github_token: ${{ secrets.PAT }}
+          pr_number: ${{ github.event.number }}
+          merge_method: merge
