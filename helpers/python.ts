@@ -43,6 +43,7 @@ const getAdditionalDependencies = (
         name: "llama-index-vector-stores-postgres",
         version: "^0.1.1",
       });
+      break;
     }
     case "pinecone": {
       dependencies.push({
@@ -125,6 +126,26 @@ const getAdditionalDependencies = (
       dependencies.push({
         name: "llama-index-agent-openai",
         version: "0.2.2",
+      });
+      break;
+    case "anthropic":
+      dependencies.push({
+        name: "llama-index-llms-anthropic",
+        version: "0.1.10",
+      });
+      dependencies.push({
+        name: "llama-index-embeddings-huggingface",
+        version: "0.2.0",
+      });
+      break;
+    case "gemini":
+      dependencies.push({
+        name: "llama-index-llms-gemini",
+        version: "0.1.7",
+      });
+      dependencies.push({
+        name: "llama-index-embeddings-gemini",
+        version: "0.1.6",
       });
       break;
   }

@@ -173,6 +173,24 @@ const getModelEnvs = (modelConfig: ModelConfig): EnvVar[] => {
           },
         ]
       : []),
+    ...(modelConfig.provider === "anthropic"
+      ? [
+          {
+            name: "ANTHROPIC_API_KEY",
+            description: "The Anthropic API key to use.",
+            value: modelConfig.apiKey,
+          },
+        ]
+      : []),
+    ...(modelConfig.provider === "gemini"
+      ? [
+          {
+            name: "GOOGLE_API_KEY",
+            description: "The Google API key to use.",
+            value: modelConfig.apiKey,
+          },
+        ]
+      : []),
   ];
 };
 
@@ -199,13 +217,7 @@ const getFrameworkEnvs = (
       name: "SYSTEM_PROMPT",
       description: `Custom system prompt.
 Example:
-SYSTEM_PROMPT="
-We have provided context information below.
----------------------
-{context_str}
----------------------
-Given this information, please answer the question: {query_str}
-"`,
+SYSTEM_PROMPT="You are a helpful assistant who helps users with their questions."`,
     },
   ];
 };
