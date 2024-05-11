@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createChatEngine } from "./engine/chat";
 import { initSettings } from "./engine/settings";
 import { LlamaIndexStream } from "./llamaindex-stream";
-import { appendEventData } from "./stream-helper";
+import { createCallbackManager } from "./stream-helper";
 
 initObservability();
 initSettings();
@@ -57,29 +57,21 @@ export async function POST(request: NextRequest) {
 
     // Init Vercel AI StreamData
     const vercelStreamData = new StreamData();
-    appendEventData(
-      vercelStreamData,
-      `Retrieving context for query: '${userMessage.content}'`,
-    );
 
-    // Setup callback for streaming data before chatting
-    Settings.callbackManager.on("retrieve", (data) => {
-      const { nodes } = data.detail;
-      appendEventData(
-        vercelStreamData,
-        `Retrieved ${nodes.length} sources to use as context for the query`,
-      );
-    });
+    // Setup callbacks
+    const callbackManager = createCallbackManager(vercelStreamData);
 
     // Calling LlamaIndex's ChatEngine to get a streamed response
-    const response = await chatEngine.chat({
-      message: userMessageContent,
-      chatHistory: messages as ChatMessage[],
-      stream: true,
+    const response = await Settings.withCallbackManager(callbackManager, () => {
+      return chatEngine.chat({
+        message: userMessageContent,
+        chatHistory: messages as ChatMessage[],
+        stream: true,
+      });
     });
 
     // Transform LlamaIndex stream to Vercel/AI format
-    const { stream } = LlamaIndexStream(response, vercelStreamData, {
+    const stream = LlamaIndexStream(response, vercelStreamData, {
       parserOptions: {
         image_url: data?.imageUrl,
       },
