@@ -1,5 +1,44 @@
 # create-llama
 
+## 0.1.6
+
+### Patch Changes
+
+- 56537a1: Display PDF files in source nodes
+
+## 0.1.5
+
+### Patch Changes
+
+- 84db798: feat: support display latex in chat markdown
+
+## 0.1.4
+
+### Patch Changes
+
+- 0bc8e75: Use ingestion pipeline for dedicated vector stores (Python only)
+- cb1001d: Add ChromaDB vector store
+
+## 0.1.3
+
+### Patch Changes
+
+- 416073d: Directly import vector stores to work with NextJS
+
+## 0.1.2
+
+### Patch Changes
+
+- 056e376: Add support for displaying tool outputs (including weather widget as example)
+
+## 0.1.1
+
+### Patch Changes
+
+- 7bd3ed5: Support Anthropic and Gemini as model providers
+- 7bd3ed5: Support new agents from LITS 0.3
+- cfb5257: Display events (e.g. retrieving nodes) per chat message
+
 ## 0.1.0
 
 ### Minor Changes
