@@ -1,12 +1,12 @@
-import { BaseTool, OpenAIAgent, QueryEngineTool } from "llamaindex";
-import { ToolsFactory } from "llamaindex/tools/ToolsFactory";
+import { BaseToolWithCall, OpenAIAgent, QueryEngineTool } from "llamaindex";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getDataSource } from "./index";
 import { STORAGE_CACHE_DIR } from "./shared";
+import { createTools } from "./tools";
 
 export async function createChatEngine() {
-  let tools: BaseTool[] = [];
+  const tools: BaseToolWithCall[] = [];
 
   // Add a query engine tool if we have a data source
   // Delete this code if you don't have a data source
@@ -23,15 +23,20 @@ export async function createChatEngine() {
     );
   }
 
+  const configFile = path.join("config", "tools.json");
+  let toolConfig: any;
   try {
     // add tools from config file if it exists
-    const config = JSON.parse(
-      await fs.readFile(path.join("config", "tools.json"), "utf8"),
-    );
-    tools = tools.concat(await ToolsFactory.createTools(config));
-  } catch {}
+    toolConfig = JSON.parse(await fs.readFile(configFile, "utf8"));
+  } catch (e) {
+    console.info(`Could not read ${configFile} file. Using no tools.`);
+  }
+  if (toolConfig) {
+    tools.push(...(await createTools(toolConfig)));
+  }
 
   return new OpenAIAgent({
     tools,
+    systemPrompt: process.env.SYSTEM_PROMPT,
   });
 }

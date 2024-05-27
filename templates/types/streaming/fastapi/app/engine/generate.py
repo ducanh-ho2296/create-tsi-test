@@ -7,9 +7,8 @@ import logging
 from llama_index.core.settings import Settings
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.storage.docstore import SimpleDocumentStore
-from app.constants import STORAGE_DIR
+from llama_index.core.storage import StorageContext
 from app.settings import init_settings
 from app.engine.loaders import get_documents
 from app.engine.vectordb import get_vector_store
@@ -18,26 +17,21 @@ from app.engine.vectordb import get_vector_store
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
+STORAGE_DIR = os.getenv("STORAGE_DIR", "storage")
+
 
 def get_doc_store():
-    if not os.path.exists(STORAGE_DIR):
-        docstore = SimpleDocumentStore()
-        return docstore
-    else:
+
+    # If the storage directory is there, load the document store from it.
+    # If not, set up an in-memory document store since we can't load from a directory that doesn't exist.
+    if os.path.exists(STORAGE_DIR):
         return SimpleDocumentStore.from_persist_dir(STORAGE_DIR)
+    else:
+        return SimpleDocumentStore()
 
 
-def generate_datasource():
-    init_settings()
-    logger.info("Creating new index")
-
-    # load the documents and create the index
-    documents = get_documents()
-    docstore = get_doc_store()
-    vector_store = get_vector_store()
-
-    # Create ingestion pipeline
-    ingestion_pipeline = IngestionPipeline(
+def run_pipeline(docstore, vector_store, documents):
+    pipeline = IngestionPipeline(
         transformations=[
             SentenceSplitter(
                 chunk_size=Settings.chunk_size,
@@ -47,23 +41,39 @@ def generate_datasource():
         ],
         docstore=docstore,
         docstore_strategy="upserts_and_delete",
+        vector_store=vector_store,
     )
 
-    # llama_index having an typing issue when passing vector_store to IngestionPipeline
-    # so we need to set it manually after initialization
-    ingestion_pipeline.vector_store = vector_store
-
     # Run the ingestion pipeline and store the results
-    ingestion_pipeline.run(show_progress=True, documents=documents)
+    nodes = pipeline.run(show_progress=True, documents=documents)
 
-    # Default vector store only keeps data in memory, so we need to persist it
-    # Can remove if using a different vector store
-    if isinstance(vector_store, SimpleVectorStore):
-        vector_store.persist(os.path.join(STORAGE_DIR, "vector_store.json"))
-    # Persist the docstore to apply ingestion strategy
-    docstore.persist(os.path.join(STORAGE_DIR, "docstore.json"))
+    return nodes
 
-    logger.info("Finished creating new index.")
+
+def persist_storage(docstore, vector_store):
+    storage_context = StorageContext.from_defaults(
+        docstore=docstore,
+        vector_store=vector_store,
+    )
+    storage_context.persist(STORAGE_DIR)
+
+
+def generate_datasource():
+    init_settings()
+    logger.info("Generate index for the provided data")
+
+    # Get the stores and documents or create new ones
+    documents = get_documents()
+    docstore = get_doc_store()
+    vector_store = get_vector_store()
+
+    # Run the ingestion pipeline
+    _ = run_pipeline(docstore, vector_store, documents)
+
+    # Build the index and persist storage
+    persist_storage(docstore, vector_store)
+
+    logger.info("Finished generating the index")
 
 
 if __name__ == "__main__":
